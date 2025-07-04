@@ -9,12 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProject = exports.getProjects = void 0;
-/**
- * Returns an Express handler to fetch a paginated list of projects from the database.
- * @param prisma - PrismaClient instance for database access
- */
-const getProjects = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getTasks = exports.createTasks = void 0;
+const getTasks = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { project_ID } = req.query;
+    // Validate project_ID
+    const projectIdNum = Number(project_ID);
+    if (!project_ID || isNaN(projectIdNum) || projectIdNum <= 0) {
+        res.status(400).json({
+            message: "Missing or invalid 'project_ID' query parameter."
+        });
+        return;
+    }
     try {
         // Parse and validate 'limit' query parameter, default to 10 if invalid or not provided
         const limit = (() => {
@@ -30,23 +35,29 @@ const getProjects = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, 
                 return 0;
             return val;
         })();
-        // Fetch projects from the database with pagination and explicit field selection
-        const projects = yield prisma.project.findMany({
+        // Fetch tasks from the database with pagination and explicit field selection
+        const tasks = yield prisma.task.findMany({
             skip: offset,
             take: limit,
-            select: {
-                project_ID: true,
-                name: true,
-                description: true,
-                startDate: true,
-                endDate: true
-            }
+            where: {
+                project_ID: projectIdNum,
+            },
+            include: {
+                author: true,
+                assignee: true,
+                comments: true,
+                attachments: true
+            },
         });
         // Get total count for pagination metadata
-        const total = yield prisma.project.count();
-        // Respond with projects and pagination metadata
+        const total = yield prisma.task.count({
+            where: {
+                project_ID: projectIdNum,
+            }
+        });
+        // Respond with tasks and pagination metadata
         res.status(200).json({
-            data: projects,
+            data: tasks,
             meta: {
                 total,
                 limit,
@@ -56,50 +67,58 @@ const getProjects = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, 
     }
     catch (error) {
         // Log and respond with error if fetching fails
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching tasks:', error);
         res.status(500).json({
             message: "An error occurred while processing your request.",
             error: error instanceof Error ? error.message : String(error)
         });
     }
 });
-exports.getProjects = getProjects;
-const createProject = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, description, startDate, endDate } = req.body;
+exports.getTasks = getTasks;
+const createTasks = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, description, status, priority, tags, startDate, dueDate, points, project_ID, author_user_ID, assigned_user_ID, updatedAt } = req.body;
     // Check for required fields
-    if (!name || !startDate || !endDate) {
-        res.status(400).json({ message: "Missing required fields: name, startDate, endDate" });
+    if (!title || !startDate || !dueDate) {
+        res.status(400).json({ message: "Missing required fields: title, startDate, dueDate" });
         return;
     }
     // Basic validation and sanitization
-    if (typeof name !== "string" ||
+    if (typeof title !== "string" ||
         typeof description !== "string" ||
-        !name.trim() ||
+        !title.trim() ||
         !description.trim() ||
         isNaN(Date.parse(startDate)) ||
-        isNaN(Date.parse(endDate))) {
+        isNaN(Date.parse(dueDate))) {
         res.status(400).json({ message: "Invalid input data" });
         return;
     }
     try {
-        const newProject = yield prisma.project.create({
+        const newTask = yield prisma.task.create({
             data: {
-                name: name.trim(),
-                description: description.trim(),
-                startDate: new Date(startDate),
-                endDate: new Date(endDate)
+                title,
+                description,
+                status,
+                priority,
+                tags,
+                startDate,
+                dueDate,
+                points,
+                project_ID,
+                author_user_ID,
+                assigned_user_ID,
+                updatedAt
             }
         });
-        // Respond with the newly created project
-        res.status(201).json(newProject);
+        // Respond with the newly created tasks
+        res.status(201).json(newTask);
     }
     catch (error) {
         // Log and respond with error if creation fails
-        console.error('Error creating projects:', error);
+        console.error('Error creating tasks:', error);
         res.status(500).json({
             message: "An error occurred while processing your request.",
             error: error instanceof Error ? error.message : String(error)
         });
     }
 });
-exports.createProject = createProject;
+exports.createTasks = createTasks;

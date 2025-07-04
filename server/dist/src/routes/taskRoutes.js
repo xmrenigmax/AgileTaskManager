@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const projectController_1 = require("../controllers/projectController");
+const taskController_1 = require("../controllers/taskController");
 const client_1 = require("@prisma/client");
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
-router.get("/", (0, projectController_1.getProjects)(prisma));
-router.post("/", (0, projectController_1.createProject)(prisma));
+router.get("/", (0, taskController_1.getTasks)(prisma));
+router.post("/", (0, taskController_1.createTasks)(prisma));
 exports.default = router;

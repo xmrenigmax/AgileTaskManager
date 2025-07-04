@@ -11,6 +11,8 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 /* Route import */
+const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
+const taskRoutes_1 = __importDefault(require("./routes/taskRoutes"));
 /* configurations */
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -29,6 +31,9 @@ app.use((0, cors_1.default)({
 app.get('/', (req, res) => {
     res.send("this server is running correctly");
 });
+// usage cases
+app.use("/projects", projectRoutes_1.default);
+app.use("/tasks", taskRoutes_1.default);
 // Catch-all 404 handler
 app.use((req, res) => {
     res.status(404).send('Not Found');
