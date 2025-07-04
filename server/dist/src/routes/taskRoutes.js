@@ -7,4 +7,5 @@ const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 router.get("/", (0, taskController_1.getTasks)(prisma));
 router.post("/", (0, taskController_1.createTasks)(prisma));
+router.patch("/:task_ID/TaskStatus", (0, taskController_1.updateTaskStatus)(prisma));
 exports.default = router;
