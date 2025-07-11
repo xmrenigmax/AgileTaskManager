@@ -22,9 +22,10 @@ app.use((0, helmet_1.default)({
 app.use((0, morgan_1.default)("common"));
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
+// CORS: Allow requests from frontend (localhost:3000) during development
 app.use((0, cors_1.default)({
-    origin: ['https://your-allowed-origin.com'],
-    methods: ['GET', 'POST'],
+    origin: ['http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
 /* Routes */
@@ -43,11 +44,13 @@ app.use((err, _req, res, _next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
 });
+// Use PORT from env or fallback to 8000 for backend (not 3000!)
 const portEnv = process.env.PORT;
-const port = portEnv && !isNaN(Number(portEnv)) ? Number(portEnv) : 3000;
+const port = portEnv && !isNaN(Number(portEnv)) ? Number(portEnv) : 8000;
 if (portEnv && isNaN(Number(portEnv))) {
-    console.error(`Invalid PORT value "${portEnv}". Falling back to 3000.`);
+    console.error(`Invalid PORT value "${portEnv}". Falling back to 8000.`);
 }
 app.listen(port, () => {
     console.log(`Server Running On Port : ${port} `);
+    console.log(`CORS allowed origins: http://localhost:3000`);
 });
