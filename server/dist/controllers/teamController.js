@@ -20,12 +20,12 @@ const getTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Map through teams to get product owner and project manager usernames
         const teamsWithUsernames = yield Promise.all(teams.map((team) => __awaiter(void 0, void 0, void 0, function* () {
             const productOwner = yield prisma.user.findUnique({
-                where: { user_ID: team.productOwneruserId },
+                where: { user_ID: team.productOwneruser_ID },
                 select: { username: true },
             });
             // map through project managers to get usernames
             const projectManager = yield prisma.user.findUnique({
-                where: { user_ID: team.projectManageruserId },
+                where: { user_ID: team.projectManageruser_ID },
                 select: { username: true },
             });
             // Return the team with usernames
@@ -35,6 +35,7 @@ const getTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json(teamsWithUsernames);
     }
     catch (error) {
+        console.error('Error in getTeams:', error);
         res
             .status(500)
             .json({ message: `Error retrieving teams: ${error.message}` });
