@@ -20,7 +20,7 @@ const getProjects = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, 
         const limit = (() => {
             const val = parseInt(req.query.limit);
             if (isNaN(val) || val <= 0 || val > 100)
-                return 10;
+                return 100; // default to 100 if not provided or invalid
             return val;
         })();
         // Parse and validate 'offset' query parameter, default to 0 if invalid or not provided

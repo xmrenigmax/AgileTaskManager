@@ -13,6 +13,9 @@ const morgan_1 = __importDefault(require("morgan"));
 /* Route import */
 const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
 const taskRoutes_1 = __importDefault(require("./routes/taskRoutes"));
+const searchRoutes_1 = __importDefault(require("./routes/searchRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const teamRoutes_1 = __importDefault(require("./routes/teamRoutes"));
 /* configurations */
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -35,6 +38,9 @@ app.get('/', (req, res) => {
 // usage cases
 app.use("/projects", projectRoutes_1.default);
 app.use("/tasks", taskRoutes_1.default);
+app.use("/search", searchRoutes_1.default);
+app.use("/users", userRoutes_1.default);
+app.use("/teams", teamRoutes_1.default);
 // Catch-all 404 handler
 app.use((req, res) => {
     res.status(404).send('Not Found');
