@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTasks = exports.updateTaskStatus = exports.getTasks = void 0;
+exports.getUserTasks = exports.createTasks = exports.updateTaskStatus = exports.getTasks = void 0;
 const client_1 = require("@prisma/client");
 /**
  * Helper function to check if a value is a valid TaskStatus enum value.
@@ -220,3 +220,27 @@ const updateTaskStatus = (prisma) => (req, res) => __awaiter(void 0, void 0, voi
     }
 });
 exports.updateTaskStatus = updateTaskStatus;
+const getUserTasks = (prisma) => (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user_ID } = req.params;
+    try {
+        const tasks = yield prisma.task.findMany({
+            where: {
+                OR: [
+                    { author_user_ID: Number(user_ID) },
+                    { assigned_user_ID: Number(user_ID) },
+                ],
+            },
+            include: {
+                author: true,
+                assignee: true,
+            },
+        });
+        res.json(tasks);
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ message: `Error retrieving user's tasks: ${error.message}` });
+    }
+});
+exports.getUserTasks = getUserTasks;

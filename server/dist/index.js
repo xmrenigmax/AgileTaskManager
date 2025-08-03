@@ -26,11 +26,7 @@ app.use((0, morgan_1.default)("common"));
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 // CORS: Allow requests from frontend (localhost:3000) during development
-app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true
-}));
+app.use((0, cors_1.default)());
 /* Routes */
 app.get('/', (req, res) => {
     res.send("this server is running correctly");
