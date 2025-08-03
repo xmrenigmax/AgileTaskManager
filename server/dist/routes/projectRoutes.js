@@ -7,4 +7,5 @@ const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 router.get("/", (0, projectController_1.getProjects)(prisma));
 router.post("/", (0, projectController_1.createProject)(prisma));
+//router.delete("/:project_ID", (req, res) => deleteProject(prisma)(req, res));
 exports.default = router;
