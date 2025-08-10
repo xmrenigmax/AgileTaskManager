@@ -15,7 +15,7 @@ const userRoutes_1 = __importDefault(require("../routes/userRoutes"));
 const teamRoutes_1 = __importDefault(require("../routes/teamRoutes"));
 const allowedOrigins = [
     'https://agile-task-manager-client.vercel.app',
-    //'http://localhost:3000' 
+    //'http://localhost:3000'
 ];
 const apiApp = (0, express_1.default)();
 apiApp.use(express_1.default.json());
@@ -39,17 +39,17 @@ apiApp.use((0, cors_1.default)({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-// API Endpoints
-apiApp.get('/api', (req, res) => {
+// API Root
+apiApp.get('/', (req, res) => {
     res.json({
         message: "API Root. Available endpoints:",
         endpoints: [
-            '/api/projects',
-            '/api/tasks',
-            '/api/search',
-            '/api/users',
-            '/api/teams',
-            '/api/priority/:level'
+            '/projects',
+            '/tasks',
+            '/search',
+            '/users',
+            '/teams',
+            '/priority/:level'
         ]
     });
 });
@@ -62,13 +62,9 @@ apiApp.get('/priority/:level', (req, res) => {
     const { level } = req.params;
     res.json({
         status: 'success',
-        data: {
-            level,
-            tasks: []
-        }
+        data: { level, tasks: [] }
     });
 });
-// Favicon handler
 apiApp.get('/favicon.ico', (req, res) => {
     res.status(204).end();
 });
@@ -82,7 +78,7 @@ apiApp.use((req, res) => {
         requestedUrl: req.originalUrl
     });
 });
-// Error handling middleware
+// Error handler
 apiApp.use((err, req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
